@@ -1,6 +1,5 @@
 const Annonce = require('../models').Annonce;
 const AgentImmobilier = require('../models').AgentImmobilier;
-const { op } = require('sequelize');
 
 exports.list_annonce = (req, res, next) => {
     Annonce.findAll({
