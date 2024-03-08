@@ -29,9 +29,6 @@ module.exports = (sequelize, DataTypes) => {
     secteur: DataTypes.STRING,
     nbRoom: DataTypes.INTEGER,
     description: DataTypes.STRING,
-    avantage: DataTypes.STRING,
-    keyWord: DataTypes.STRING,
-    //realtorAgent: DataTypes.BOOLEAN,
     picture: {
       type: DataTypes.STRING,
       allowNull: true
