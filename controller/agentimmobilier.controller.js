@@ -63,3 +63,15 @@ exports.login_realtor = (req, res, next) => {
     })
     .catch(err => res.status(500).json(err))
 }
+
+exports.delete_realtor = (req, res, next) => {
+    AgentImmobilier.destroy({
+        where: {
+            id: req.params.id
+        }
+    })
+    .then(() => {
+        res.status(204).json({message: "realtor deleted"})
+    })
+    .catch(err => console.log(err))
+}
