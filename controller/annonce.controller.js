@@ -1,5 +1,7 @@
 const Annonce = require('../models').Annonce;
 const AgentImmobilier = require('../models').AgentImmobilier;
+const Response = require('../utils/response.util.js');
+const HttpStatus = require('../utils/httpStatus.util.js');
 
 exports.list_annonce = (req, res, next) => {
     Annonce.findAll({
@@ -15,7 +17,14 @@ exports.list_annonce = (req, res, next) => {
         ]
     })
     .then(data => {
-        res.status(200).json(data);
+        res.status(HttpStatus.OK.code).send(
+            new Response(
+                HttpStatus.OK.code,
+                HttpStatus.OK.message,
+                'Annonce retrieved',
+                data
+            )
+        )
     })
     .catch(err => console.log(err))
 }
