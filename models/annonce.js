@@ -13,11 +13,9 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Annonce.belongsTo(models.AgentImmobilier);
       Annonce.belongsTo(models.Bien);
-      // Annonce.hasMany(models.AvantageAnnonce)
       Annonce.belongsToMany(models.Avantage, {
         through: models.AvantageAnnonce
       })
-      // Annonce.hasMany(models.KeyWordAnnonce)
       Annonce.belongsToMany(models.KeyWord, {
         through: models.KeyWordAnnonce
       })

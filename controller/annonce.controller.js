@@ -97,8 +97,6 @@ exports.create_annonce = async (req, res, next) => {
 
         const annonce = await Annonce.create(annonceObject);
 
-        console.log("annonceObject", annonceObject)
-
         // Association des avantages
         if (avantageIds && avantageIds.length > 0) {
             const avantages = await Avantage.findAll({ where: { id: avantageIds } });
