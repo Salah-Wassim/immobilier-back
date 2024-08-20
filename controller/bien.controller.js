@@ -9,6 +9,25 @@ exports.list_bien = (req, res, next) => {
     .catch(err => console.log(err))
 }
 
+exports.find_one_biens = (req, res, next) => {
+    const id = req.params.id
+
+    Bien.findByPk(id)
+    .then(data => {
+        if(data){
+            res.status(200).json(data)
+        }
+        else(
+            res.status(404).json({
+                message : "Bien not found"
+            })
+        )
+    })
+    .catch(err => {
+        res.status(500).json(err)
+    })
+}
+
 exports.create_bien = (req, res, next) => {
     Bien.create(req.body)
     .then(data => {

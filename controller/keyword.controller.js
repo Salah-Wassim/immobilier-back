@@ -8,6 +8,25 @@ exports.list_keyword = (req, res, next) => {
     .catch(err => console.log(err))
 }
 
+exports.find_one_keyword = (req, res, next) => {
+    const id = req.params.id
+
+    KeyWord.findByPk(id)
+    .then(data => {
+        if(data){
+            res.status(200).json(data)
+        }
+        else(
+            res.status(404).json({
+                message : "Keyword not found"
+            })
+        )
+    })
+    .catch(err => {
+        res.status(500).json(err)
+    })
+}
+
 exports.create_keyword = (req, res, next) => {
     KeyWord.create(req.body)
     .then(data => {
