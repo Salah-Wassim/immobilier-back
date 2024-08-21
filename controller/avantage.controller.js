@@ -1,11 +1,32 @@
 const Avantage = require('../models').Avantage;
 
 exports.list_avantage = (req, res, next) => {
-    Avantage.findAll({})
+    Avantage.findAll({
+        attributes: ['id', 'name']
+    })
     .then(data => {
         res.status(200).json(data);
     })
     .catch(err => console.log(err))
+}
+
+exports.find_one_avantage = (req, res, next) => {
+    const id = req.params.id
+
+    Avantage.findByPk(id)
+    .then(data => {
+        if(data){
+            res.status(200).json(data)
+        }
+        else{
+            res.status(404).json({
+                message : "Avantage not found"
+            })
+        }
+    })
+    .catch(err => {
+        res.status(500).json(err)
+    })
 }
 
 exports.create_avantage = (req, res, next) => {

@@ -23,12 +23,6 @@ module.exports = {
       description: {
         type: Sequelize.STRING
       },
-      avantage: {
-        type: Sequelize.STRING
-      },
-      keyWord: {
-        type: Sequelize.STRING
-      },
       picture: {
         type: Sequelize.STRING
       },
