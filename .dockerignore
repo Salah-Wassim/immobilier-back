@@ -4,11 +4,11 @@
 .idea
 .idea/
 
-.env
-/.env
-
-node_modules
+/node_modules
 node_modules/
 
+.DS_Store
+
+.env
 docker-compose.yaml
 Dockerfile
