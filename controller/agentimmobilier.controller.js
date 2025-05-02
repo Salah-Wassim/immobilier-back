@@ -13,6 +13,35 @@ exports.list_realtor = (req, res, next) => {
     .catch(err => console.log(err))
 }
 
+exports.list_one_realtor = (req, res, next) => {
+    const id = req.params.id;
+
+    if(!id){
+        res.status(400).send({message : `Id value ${id} cannot exist or type is incorrect`})
+    }
+
+    AgentImmobilier.findOne({
+        where: {
+            id : id
+        }
+    })
+    .then(data => {
+        if(data){
+            res.status(200).send(data)
+        }
+        else{
+            res.status(404).send({
+                message: "Realtor no found"
+            })
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        res.status(500).send(err)
+    })
+
+}
+
 exports.create_realtor = (req, res, next) => {
     passwordService.verifyPassword(req.body.password)
     .then(result => {
@@ -62,6 +91,55 @@ exports.login_realtor = (req, res, next) => {
         }
     })
     .catch(err => res.status(500).json(err))
+}
+
+exports.edit_realtor = (req, res, next) => {
+    const id = req.params.id
+
+    const {name, age, email, phoneNumber} = req.body
+
+    if(!id){
+        res.status(400).send({message : `Id value ${id} cannot exist or type is incorrect`})
+    }
+
+    const realtor = {}
+
+    realtor = {
+        name : name && typeof(name) === "string" ? name : "",
+        age : age && typeof(age) === 'number' ? age : "",
+        email : email && typeof(email) === "string" ? email : "",
+        phoneNumber : phoneNumber && typeof(phoneNumber) === "string" ? phoneNumber : ""
+    }
+
+    for(value in realtor){
+        if(!realtor[value]){
+            res.status(400).send({
+                message : "Une erreur s'est produite"
+            })
+        }
+    }
+
+    AgentImmobilier.update(realtor, {
+        where : {
+            id : id
+        }
+    })
+    .then((data) => {
+        if(data){
+            res.status(200).send({
+                message: 'Realtor edited'
+            })
+        }
+        else{
+            res.status(404).send({
+                message : "Realtor no found"
+            })
+        }
+    })
+    .catch(err => {
+        console.error(err)
+        res.status(500).send(err)
+    })
 }
 
 exports.delete_realtor = (req, res, next) => {

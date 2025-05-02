@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: immobilier-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: immobilier-api
+  template:
+    metadata:
+      labels:
+        app: immobilier-api
+    spec:
+      containers:
+      - name: immobilier-api
+        image: salahwassim/immobilier_api:dev
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NODE_ENV
+          value: development
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 200m
+            memory: 256Mi
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
