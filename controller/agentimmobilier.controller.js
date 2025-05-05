@@ -102,13 +102,13 @@ exports.edit_realtor = (req, res, next) => {
         res.status(400).send({message : `Id value ${id} cannot exist or type is incorrect`})
     }
 
-    const realtor = {}
+    let realtor = {}
 
     realtor = {
         name : name && typeof(name) === "string" ? name : "",
         age : age && typeof(age) === 'number' ? age : "",
         email : email && typeof(email) === "string" ? email : "",
-        phoneNumber : phoneNumber && typeof(phoneNumber) === "string" ? phoneNumber : ""
+        phoneNumber : phoneNumber && typeof(phoneNumber) === "number" ? phoneNumber : ""
     }
 
     for(value in realtor){
