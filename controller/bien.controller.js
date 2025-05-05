@@ -38,12 +38,12 @@ exports.create_bien = (req, res, next) => {
             })
         }
         else{
-            res.status(201).json({
+            res.status(400).json({
                 message: 'Error : cannot created bien',
             })
         }
     })
-    .catch(err => res.status(400).json(err))
+    .catch(err => res.status(500).json(err))
 }
 
 exports.edit_bien = (req, res, next) => {
@@ -53,12 +53,20 @@ exports.edit_bien = (req, res, next) => {
         }
     })
     .then(data => {
-        res.status(200).json({
-            message: 'bien edited',
-            data: data
-        })
+        console.log("biens", data)
+        if(data){
+            res.status(200).json({
+                message: 'bien edited',
+                data: data
+            })
+        }
+        else{
+            res.status(400).json({
+                message: 'Error : cannot edit bien',
+            })
+        }
     })
-    .catch(err => res.status(400).json(err))
+    .catch(err => res.status(500).json(err))
 }
 
 exports.delete_bien = (req, res, next) => {

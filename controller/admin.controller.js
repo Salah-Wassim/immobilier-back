@@ -40,9 +40,7 @@ exports.login_admin = (req, res, next) => {
                 }
                 else if(result){
                     const token = jwt.sign({name: admin.name, email: admin.email}, process.env.SECRETADMIN, {expiresIn: '1h'})
-                    res.status(200).json({
-                        token: token
-                    })
+                    res.status(200).send({token})
                 }
                 else{
                     res.status(400).json({
