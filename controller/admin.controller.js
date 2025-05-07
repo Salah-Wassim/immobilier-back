@@ -71,7 +71,7 @@ exports.create_admin = async (req, res, next) => {
 
     if(await passwordService.isPasswordUses(password)){
         return res.status(400).json({
-            message : "Le mot de passe est déjà utilisé"
+            message : "Ce mot de passe est trop faible ou compromis. Veuillez en choisir un plus robuste."
         })
     }
 

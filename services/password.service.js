@@ -22,13 +22,11 @@ async function isPasswordUses(plainPassword){
     
         const allUsers = [...admins, ...realtors]
 
-        const passwordChecks = allUsers.map(user => 
-            bcrypt.compare(plainPassword, user.password)
+        const passwordChecks = await Promise.all(
+            allUsers.map(user => bcrypt.compare(plainPassword, user.password))
         );
-    
-        const isPasswordUsed = await Promise.any(passwordChecks)
-        .then(() => true)
-        .catch(() => false)
+
+        const isPasswordUsed = passwordChecks.includes(true)
 
         return isPasswordUsed
     }
