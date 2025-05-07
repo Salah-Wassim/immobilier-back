@@ -10,20 +10,17 @@ exports.find_all_admin = (req, res, next) => {
     })
     .then(data =>{
         if(data){
-            return res.status(200).send({
-                data : data,
-                message : "All admin"
-            })
+            return res.status(200).json(data)
         }
         else{
-            return res.status(404).send({
-                message : "Admon not found"
+            return res.status(404).json({
+                message : "Admins not found"
             })
         }
     })
     .catch(err => {
         console.error(err);
-        return res.status(500).send({
+        return res.status(500).json({
             message : err
         })
     })
@@ -33,7 +30,7 @@ exports.find_one_admin = (req, res, next) => {
     const id = req.params.id
 
     if(!id){
-        return res.status(400).send({message : `Id value ${id} cannot exist or type is incorrect`})
+        return res.status(400).json({message : `Id value ${id} cannot exist or type is incorrect`})
     }
 
     Admin.findOne({
@@ -43,19 +40,17 @@ exports.find_one_admin = (req, res, next) => {
     })
     .then(data => {
         if(data){
-            return res.status(200).send({
-                data: data
-            })
+            return res.status(200).json(data)
         }
         else{
-            return res.status(404).send({
+            return res.status(404).json({
                 message: "Admin not found"
             })
         }
     })
     .catch(err => {
         console.error(err);
-        return res.status(500).send({
+        return res.status(500).json({
             message : err
         })
     })
@@ -69,13 +64,13 @@ exports.create_admin = async (req, res, next) => {
     const findEmailAdmin = await Admin.findOne({where : {email : email}})
 
     if(findEmailRealtor || findEmailAdmin){
-        return res.status(400).send({
+        return res.status(400).json({
             message : `L'adresse mail ${email} est déjà utilisé`
         })
     }   
 
     if(await passwordService.isPasswordUses(password)){
-        return res.status(400).send({
+        return res.status(400).json({
             message : "Le mot de passe est déjà utilisé"
         })
     }
@@ -90,7 +85,7 @@ exports.create_admin = async (req, res, next) => {
 
     for(value in admin){
         if(!admin[value]){
-            res.status(400).send({
+            res.status(400).json({
                 message : "Une erreur s'est produite"
             })
         }
@@ -109,7 +104,7 @@ exports.create_admin = async (req, res, next) => {
             })
             .catch(err => {
                 console.error(err)
-                return res.status(500).send({
+                return res.status(500).json({
                     message : err
                 })
             })
@@ -120,7 +115,7 @@ exports.create_admin = async (req, res, next) => {
     })
     .catch(err => {
         console.error(err);
-        return res.status(500).send({
+        return res.status(500).json({
             message : err
         })
     })
@@ -158,7 +153,7 @@ exports.edit_admin = (req, res, next) => {
     const id = req.params.id;
 
     if(!id){
-        res.status(400).send({message : `Id value ${id} cannot exist or type is incorrect`})
+        res.status(400).json({message : `Id value ${id} cannot exist or type is incorrect`})
     }
 
     const {name, email} = req.body;
@@ -185,20 +180,20 @@ exports.edit_admin = (req, res, next) => {
     })
     .then(data => {
         if(data){
-            res.status(200).send({
+            res.status(200).json({
                 data: data,
                 message : "Admin was edited"
             })
         }
         else{
-            res.status(400).send({
+            res.status(400).json({
                 message : "Une erreur s'est produite lors de la validation du formulaire"
             })
         }
     })
     .catch(err => {
         console.error(err);
-        res.status(500).send({
+        res.status(500).json({
             message : err
         })
     })
@@ -208,7 +203,7 @@ exports.delete_admin = (req, res, next) => {
     const id = req.params.id;
 
     if(!id){
-        res.status(400).send({message : `Id value ${id} cannot exist or type is incorrect`})
+        res.status(400).json({message : `Id value ${id} cannot exist or type is incorrect`})
     }
 
     Admin.destroy({
@@ -221,7 +216,7 @@ exports.delete_admin = (req, res, next) => {
     })
     .catch(err => {
         console.error(err);
-        res.status(500).send({
+        res.status(500).json({
             message : err
         })
     })
