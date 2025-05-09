@@ -140,7 +140,7 @@ exports.login_admin = (req, res, next) => {
                 }
                 else{
                     return res.status(400).json({
-                        message: 'Bad login/password'
+                        message: 'L\'adresse email ou le mot de passe est incorrecte'
                     })
                 }
             })
