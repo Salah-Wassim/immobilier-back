@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
+const authAdmin = require('../middleware/auth-admin')
 
 const realtor_controller = require('../controller/agentimmobilier.controller');
 
@@ -19,9 +19,9 @@ const upload = multer({storage});
 
 router.get('/list-realtors', realtor_controller.list_realtor)
 router.get('/realtor/:id', realtor_controller.list_one_realtor)
-router.post('/add-realtors',upload.single('picture'), realtor_controller.create_realtor);
+router.post('/add-realtors', authAdmin(), upload.single('picture'), realtor_controller.create_realtor);
 router.put('/edit-realtor/:id', realtor_controller.edit_realtor)
-router.post('/login', realtor_controller.login_realtor);
-router.delete('/:id', realtor_controller.delete_realtor);
+router.post('/login-realtor', realtor_controller.login_realtor);
+router.delete('/:id', authAdmin(), realtor_controller.delete_realtor);
 
 module.exports = router;
