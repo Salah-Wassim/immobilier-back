@@ -102,6 +102,14 @@ exports.edit_realtor = (req, res, next) => {
         res.status(400).send({message : `Id value ${id} cannot exist or type is incorrect`})
     }
 
+    const realtorIdConnected = req.realtor.id
+
+    if(id !== realtorIdConnected){
+        res.status(401).send({
+            message : "Vous ne pouvez pas modifié ce profil"
+        })
+    }
+
     let realtor = {}
 
     realtor = {
