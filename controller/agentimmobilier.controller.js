@@ -102,10 +102,7 @@ exports.edit_realtor = (req, res, next) => {
         res.status(400).send({message : `Id value ${id} cannot exist or type is incorrect`})
     }
 
-    const realtorIdConnected = req.realtor
-
-    console.log("realtorIdConnected", realtorIdConnected)
-    console.log("id", id)
+    const realtorIdConnected = req.realtor.id
 
     if(id !== realtorIdConnected){
         return res.status(401).send({
