@@ -77,14 +77,14 @@ exports.login_realtor = (req, res, next) => {
                     throw err
                 }
                 else if(result){
-                    const token = jwt.sign({name: realtor.name, email: realtor.email}, process.env.SECRETREALTOR, {expiresIn: '23h'})
+                    const token = jwt.sign({name: realtor.name, email: realtor.email}, process.env.SECRETREALTOR, {expiresIn: '1h'})
                     res.status(200).json({
                         token: token
                     })
                 }
                 else{
                     res.status(400).json({
-                        message: 'Bad name and or password'
+                        message: 'L\'adresse email ou le mot de passe est incorrecte'
                     })
                 }
             })
@@ -102,10 +102,13 @@ exports.edit_realtor = (req, res, next) => {
         res.status(400).send({message : `Id value ${id} cannot exist or type is incorrect`})
     }
 
-    const realtorIdConnected = req.realtor.id
+    const realtorIdConnected = req.realtor
+
+    console.log("realtorIdConnected", realtorIdConnected)
+    console.log("id", id)
 
     if(id !== realtorIdConnected){
-        res.status(401).send({
+        return res.status(401).send({
             message : "Vous ne pouvez pas modifié ce profil"
         })
     }
