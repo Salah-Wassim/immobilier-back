@@ -92,14 +92,19 @@ exports.create_admin = async (req, res, next) => {
     }
 
     passwordService.verifyPassword(password)
-    .then(result => {
-        if(result){
-            admin.password = result
+    .then(hash => {
+        if(hash){
+            admin.password = hash
             Admin.create(admin)
-            .then(adminCreated => {
+            .then(admin => {
+                const accessToken = jwt.sign({
+                    id : admin.id,
+                    email : admin.email
+                }, process.env.SECRETADMIN, {expiresIn: process.env.EXPIRES_IN})
                 return res.status(201).json({
                     message: 'Admin created',
-                    adminCreated: adminCreated
+                    adminCreated: admin,
+                    accessToken : accessToken
                 })
             })
             .catch(err => {
@@ -110,7 +115,7 @@ exports.create_admin = async (req, res, next) => {
             })
         }
         else{
-            return res.status(400).json({message: "wrong password format"});
+            return res.status(400).json({message: "Le format du mot de passe est incorrecte"});
         }
     })
     .catch(err => {
@@ -135,7 +140,7 @@ exports.login_admin = (req, res, next) => {
                     throw err
                 }
                 else if(result){
-                    const token = jwt.sign({name: admin.name, email: admin.email}, process.env.SECRETADMIN, {expiresIn: '1h'})
+                    const token = jwt.sign({id: admin.id, email: admin.email}, process.env.SECRETADMIN, {expiresIn: process.env.EXPIRES_IN})
                     res.status(200).send({token})
                 }
                 else{
@@ -154,6 +159,14 @@ exports.edit_admin = (req, res, next) => {
 
     if(!id){
         res.status(400).json({message : `Id value ${id} cannot exist or type is incorrect`})
+    }
+
+    const adminIdConnected = req.admin.id;
+
+    if(id !== adminIdConnected){
+        return res.status(403).send({
+            message : "Vous ne pouvez pas modifié ce profil"
+        })
     }
 
     const {name, email} = req.body;
