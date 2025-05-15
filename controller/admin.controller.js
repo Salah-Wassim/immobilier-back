@@ -58,7 +58,7 @@ exports.find_one_admin = (req, res, next) => {
 
 exports.create_admin = async (req, res, next) => {
 
-    const {name, email, password} = req.body;
+    const {name, email, password, roleAdmin} = req.body;
 
     const findEmailRealtor = await AgentImmobilier.findOne({where : {email : email}})
     const findEmailAdmin = await Admin.findOne({where : {email : email}})
@@ -80,7 +80,8 @@ exports.create_admin = async (req, res, next) => {
     admin = {
         name : name && typeof(name) === "string" ? name : "",
         email : email && typeof(email) === "string" ? email : "",
-        password : password && typeof(password) === "string" ? password : ""
+        password : password && typeof(password) === "string" ? password : "",
+        roleAdmin : roleAdmin && typeof(roleAdmin) === 'string' ? roleAdmin : "true"
     }
 
     for(value in admin){
