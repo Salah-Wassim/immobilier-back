@@ -1,11 +1,12 @@
 const bcrypt = require('bcrypt')
 const Admin = require('../models').Admin;
 const AgentImmobilier = require('../models').AgentImmobilier;
+const constante = require('../utils/constantes')
 
 async function verifyPassword(password){
     try {
         if(password.length > 8){
-            return bcrypt.hash(password, 10);
+            return bcrypt.hash(password, constante.SALT_HASH_KEY);
         }
         else{
             return false;

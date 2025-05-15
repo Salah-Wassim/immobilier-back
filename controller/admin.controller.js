@@ -58,7 +58,7 @@ exports.find_one_admin = (req, res, next) => {
 
 exports.create_admin = async (req, res, next) => {
 
-    const {name, email, password} = req.body;
+    const {name, email, password, roleAdmin} = req.body;
 
     const findEmailRealtor = await AgentImmobilier.findOne({where : {email : email}})
     const findEmailAdmin = await Admin.findOne({where : {email : email}})
@@ -80,7 +80,8 @@ exports.create_admin = async (req, res, next) => {
     admin = {
         name : name && typeof(name) === "string" ? name : "",
         email : email && typeof(email) === "string" ? email : "",
-        password : password && typeof(password) === "string" ? password : ""
+        password : password && typeof(password) === "string" ? password : "",
+        roleAdmin : roleAdmin && typeof(roleAdmin) === 'string' ? roleAdmin : "true"
     }
 
     for(value in admin){
@@ -92,14 +93,19 @@ exports.create_admin = async (req, res, next) => {
     }
 
     passwordService.verifyPassword(password)
-    .then(result => {
-        if(result){
-            admin.password = result
+    .then(hash => {
+        if(hash){
+            admin.password = hash
             Admin.create(admin)
-            .then(adminCreated => {
+            .then(admin => {
+                const accessToken = jwt.sign({
+                    id : admin.id,
+                    email : admin.email
+                }, process.env.SECRETADMIN, {expiresIn: process.env.EXPIRES_IN})
                 return res.status(201).json({
                     message: 'Admin created',
-                    adminCreated: adminCreated
+                    adminCreated: admin,
+                    accessToken : accessToken
                 })
             })
             .catch(err => {
@@ -110,7 +116,7 @@ exports.create_admin = async (req, res, next) => {
             })
         }
         else{
-            return res.status(400).json({message: "wrong password format"});
+            return res.status(400).json({message: "Le format du mot de passe est incorrecte"});
         }
     })
     .catch(err => {
@@ -135,7 +141,7 @@ exports.login_admin = (req, res, next) => {
                     throw err
                 }
                 else if(result){
-                    const token = jwt.sign({name: admin.name, email: admin.email}, process.env.SECRETADMIN, {expiresIn: '1h'})
+                    const token = jwt.sign({id: admin.id, email: admin.email}, process.env.SECRETADMIN, {expiresIn: process.env.EXPIRES_IN})
                     res.status(200).send({token})
                 }
                 else{
@@ -153,7 +159,15 @@ exports.edit_admin = (req, res, next) => {
     const id = req.params.id;
 
     if(!id){
-        res.status(400).json({message : `Id value ${id} cannot exist or type is incorrect`})
+        return res.status(400).json({message : `Id value ${id} cannot exist or type is incorrect`})
+    }
+
+    const adminIdConnected = req.admin.id;
+
+    if(id !== adminIdConnected.toString()){
+        return res.status(403).send({
+            message : "Vous ne pouvez pas modifié ce profil"
+        })
     }
 
     const {name, email} = req.body;

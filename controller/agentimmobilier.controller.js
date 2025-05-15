@@ -1,4 +1,5 @@
 const AgentImmobilier = require('../models').AgentImmobilier;
+const Admin = require('../models').Admin;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const passwordService = require('../services/password.service')
@@ -42,26 +43,74 @@ exports.list_one_realtor = (req, res, next) => {
 
 }
 
-exports.create_realtor = (req, res, next) => {
+exports.create_realtor = async (req, res, next) => {
+
+    const {name, age, email, password, picture, phoneNumber, roleAdmin} = req.body;
+
+    const findEmailRealtor = await AgentImmobilier.findOne({where : {email : email}})
+    const findEmailAdmin = await Admin.findOne({where : {email : email}})
+
+    if(findEmailRealtor || findEmailAdmin){
+        return res.status(400).json({
+            message : `L'adresse mail ${email} est déjà utilisé`
+        })
+    }   
+
+    if(await passwordService.isPasswordUses(password)){
+        return res.status(400).json({
+            message : "Ce mot de passe est trop faible ou compromis. Veuillez en choisir un plus robuste."
+        })
+    }
+
+    let realtor = {};
+
+    realtor = {
+        name : name && typeof(name) === 'string' ? name : "",
+        age : age && typeof(age) === 'number' ? age : "",
+        email : email && typeof(email) === 'string' ? email : "",
+        password : password && typeof(password) === 'string' ? password : "",
+        picture : picture && typeof(picture) === 'string' ? picture : "Aucune photo",
+        phoneNumber : phoneNumber && typeof(phoneNumber) === 'number' ? phoneNumber : "",
+        roleAdmin : roleAdmin && typeof(roleAdmin) === 'string' ? roleAdmin : "false"
+    }
+
+    for(value in realtor){
+        if(!realtor[value]){
+            return res.status(400).json({
+                message : `Une erreur s'est produite : ${realtor[value]}`
+            })
+        }
+    }
+
     passwordService.verifyPassword(req.body.password)
-    .then(result => {
-        if(result){
-            let realtor = req.body;
-            realtor.password = result
+    .then(hash => {
+        if(hash){
+            realtor.password = hash
             AgentImmobilier.create(realtor)
-            .then(realtorCreated => {
-                res.status(201).json({
+            .then(realtor => {
+                const accessToken = jwt.sign({
+                    id: realtor.id,
+                    email: realtor.email
+                }, process.env.SECRETREALTOR, { expiresIn:process.env.EXPIRES_IN});
+                return res.status(201).json({
                     message: 'Realtor created',
-                    realtorCreated: realtorCreated
+                    realtorCreated: realtor,
+                    accessToken : accessToken
                 })
             })
-            .catch(err => res.status(400).json(err))
+            .catch(err => {
+                console.error(err)
+                return res.status(400).json({message : err})
+            })
         }
         else{
-            res.status(400).json({message: "wrong password format"})
+            return res.status(400).json({message: "Le format du mot de passe est incorrecte"})
         }
     })
-    .catch(err => console.log(err))
+    .catch(err => {
+        console.log(err)
+        return res.status(500).json({message : err})
+    })
 }
 
 exports.login_realtor = (req, res, next) => {
@@ -77,13 +126,13 @@ exports.login_realtor = (req, res, next) => {
                     throw err
                 }
                 else if(result){
-                    const token = jwt.sign({name: realtor.name, email: realtor.email}, process.env.SECRETREALTOR, {expiresIn: '1h'})
-                    res.status(200).json({
+                    const token = jwt.sign({id: realtor.id, email: realtor.email}, process.env.SECRETREALTOR, {expiresIn: process.env.EXPIRES_IN})
+                    return res.status(200).json({
                         token: token
                     })
                 }
                 else{
-                    res.status(400).json({
+                    return res.status(400).json({
                         message: 'L\'adresse email ou le mot de passe est incorrecte'
                     })
                 }
@@ -104,8 +153,8 @@ exports.edit_realtor = (req, res, next) => {
 
     const realtorIdConnected = req.realtor.id
 
-    if(id !== realtorIdConnected){
-        return res.status(401).send({
+    if(id !== realtorIdConnected.toString()){
+        return res.status(403).send({
             message : "Vous ne pouvez pas modifié ce profil"
         })
     }
