@@ -158,12 +158,12 @@ exports.edit_admin = (req, res, next) => {
     const id = req.params.id;
 
     if(!id){
-        res.status(400).json({message : `Id value ${id} cannot exist or type is incorrect`})
+        return res.status(400).json({message : `Id value ${id} cannot exist or type is incorrect`})
     }
 
     const adminIdConnected = req.admin.id;
 
-    if(id !== adminIdConnected){
+    if(id !== adminIdConnected.toString()){
         return res.status(403).send({
             message : "Vous ne pouvez pas modifié ce profil"
         })

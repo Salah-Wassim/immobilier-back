@@ -153,7 +153,7 @@ exports.edit_realtor = (req, res, next) => {
 
     const realtorIdConnected = req.realtor.id
 
-    if(id !== realtorIdConnected){
+    if(id !== realtorIdConnected.toString()){
         return res.status(403).send({
             message : "Vous ne pouvez pas modifié ce profil"
         })
