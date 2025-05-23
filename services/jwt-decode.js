@@ -11,9 +11,7 @@ function jwt_decode_realtor (req, res) {
                 })
             }
             else{
-                return res.status(200).json({
-                    tokenDecoded : decoded
-                })
+                return res.status(200).json(decoded)
             }
         })
     }
@@ -35,9 +33,7 @@ function jwt_decode_admin (req, res) {
                 })
             }
             else{
-                return res.status(200).json({
-                    tokenDecoded : decoded
-                })
+                return res.status(200).json(decoded)
             }
         })
     }
