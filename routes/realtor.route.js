@@ -18,6 +18,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage});
 
+router.get('/me', authRealtor(), realtor_controller.me)
 router.get('/list-realtors', realtor_controller.list_realtor)
 router.get('/realtor/:id', realtor_controller.list_one_realtor)
 router.post('/add-realtors', upload.single('picture'), realtor_controller.create_realtor);
