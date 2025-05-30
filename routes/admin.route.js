@@ -4,6 +4,7 @@ const authAdmin = require('../middleware/auth-admin')
 
 const admin_controller = require('../controller/admin.controller');
 
+router.get('/me', authAdmin(), admin_controller.me);
 router.get('/', authAdmin(), admin_controller.find_all_admin);
 router.get('/:id', authAdmin(), admin_controller.find_one_admin);
 router.post('/new-admin', authAdmin(), admin_controller.create_admin);

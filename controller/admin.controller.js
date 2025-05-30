@@ -3,6 +3,17 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const passwordService = require('../services/password.service')
 const AgentImmobilier = require('../models').AgentImmobilier;
+const jwtDecode = require('../services/jwt-decode')
+
+exports.me = (req, res, next) => {
+    try{
+        return jwtDecode.jwt_decode_admin(req, res)
+    }
+    catch(err){
+        console.error(err)
+        res.status(500).json(err)
+    }
+}
 
 exports.find_all_admin = (req, res, next) => {
     Admin.findAll({
@@ -100,7 +111,8 @@ exports.create_admin = async (req, res, next) => {
             .then(admin => {
                 const accessToken = jwt.sign({
                     id : admin.id,
-                    email : admin.email
+                    email : admin.email,
+                    roleAdmin: admin.roleAdmin
                 }, process.env.SECRETADMIN, {expiresIn: process.env.EXPIRES_IN})
                 return res.status(201).json({
                     message: 'Admin created',
@@ -141,7 +153,7 @@ exports.login_admin = (req, res, next) => {
                     throw err
                 }
                 else if(result){
-                    const token = jwt.sign({id: admin.id, email: admin.email}, process.env.SECRETADMIN, {expiresIn: process.env.EXPIRES_IN})
+                    const token = jwt.sign({id: admin.id, email: admin.email, roleAdmin: admin.roleAdmin}, process.env.SECRETADMIN, {expiresIn: process.env.EXPIRES_IN})
                     res.status(200).send({token})
                 }
                 else{

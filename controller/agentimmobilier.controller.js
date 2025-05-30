@@ -3,6 +3,17 @@ const Admin = require('../models').Admin;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const passwordService = require('../services/password.service')
+const jwtDecode = require('../services/jwt-decode')
+
+exports.me = (res, req, next) => {
+    try{
+        return jwtDecode.jwt_decode_realtor(req, res)
+    }
+    catch(err){
+        console.error(err)
+        res.status(500).json(err)
+    }
+}
 
 exports.list_realtor = (req, res, next) => {
     AgentImmobilier.findAll({
@@ -90,7 +101,8 @@ exports.create_realtor = async (req, res, next) => {
             .then(realtor => {
                 const accessToken = jwt.sign({
                     id: realtor.id,
-                    email: realtor.email
+                    email: realtor.email,
+                    roleAdmin: realtor.roleAdmin
                 }, process.env.SECRETREALTOR, { expiresIn:process.env.EXPIRES_IN});
                 return res.status(201).json({
                     message: 'Realtor created',
@@ -126,7 +138,7 @@ exports.login_realtor = (req, res, next) => {
                     throw err
                 }
                 else if(result){
-                    const token = jwt.sign({id: realtor.id, email: realtor.email}, process.env.SECRETREALTOR, {expiresIn: process.env.EXPIRES_IN})
+                    const token = jwt.sign({id: realtor.id, email: realtor.email, roleAdmin: realtor.roleAdmin}, process.env.SECRETREALTOR, {expiresIn: process.env.EXPIRES_IN})
                     return res.status(200).json({
                         token: token
                     })
