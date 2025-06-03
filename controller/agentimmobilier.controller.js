@@ -56,7 +56,7 @@ exports.list_one_realtor = (req, res, next) => {
 
 exports.create_realtor = async (req, res, next) => {
 
-    const {name, age, email, password, picture, phoneNumber, roleAdmin} = req.body;
+    const {name, age, email, password, picture, phoneNumber, role} = req.body;
 
     const findEmailRealtor = await AgentImmobilier.findOne({where : {email : email}})
     const findEmailAdmin = await Admin.findOne({where : {email : email}})
@@ -82,7 +82,7 @@ exports.create_realtor = async (req, res, next) => {
         password : password && typeof(password) === 'string' ? password : "",
         picture : picture && typeof(picture) === 'string' ? picture : "Aucune photo",
         phoneNumber : phoneNumber && typeof(phoneNumber) === 'number' ? phoneNumber : "",
-        roleAdmin : roleAdmin && typeof(roleAdmin) === 'string' ? roleAdmin : "false"
+        role : role && typeof(role) === 'string' ? role : "realtor"
     }
 
     for(value in realtor){
@@ -102,7 +102,7 @@ exports.create_realtor = async (req, res, next) => {
                 const accessToken = jwt.sign({
                     id: realtor.id,
                     email: realtor.email,
-                    roleAdmin: realtor.roleAdmin
+                    role: realtor.role
                 }, process.env.SECRETREALTOR, { expiresIn:process.env.EXPIRES_IN});
                 return res.status(201).json({
                     message: 'Realtor created',
@@ -138,7 +138,7 @@ exports.login_realtor = (req, res, next) => {
                     throw err
                 }
                 else if(result){
-                    const token = jwt.sign({id: realtor.id, email: realtor.email, roleAdmin: realtor.roleAdmin}, process.env.SECRETREALTOR, {expiresIn: process.env.EXPIRES_IN})
+                    const token = jwt.sign({id: realtor.id, email: realtor.email, role: realtor.role}, process.env.SECRETREALTOR, {expiresIn: process.env.EXPIRES_IN})
                     return res.status(200).json({
                         token: token
                     })

@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     phoneNumber: DataTypes.INTEGER,
-    roleAdmin: DataTypes.BOOLEAN
+    role: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'AgentImmobilier',

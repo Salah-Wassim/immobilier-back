@@ -26,8 +26,8 @@ module.exports = {
       phoneNumber: {
         type: Sequelize.INTEGER
       },
-      roleAdmin: {
-        type: Sequelize.BOOLEAN
+      role: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,

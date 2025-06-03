@@ -69,7 +69,7 @@ exports.find_one_admin = (req, res, next) => {
 
 exports.create_admin = async (req, res, next) => {
 
-    const {name, email, password, roleAdmin} = req.body;
+    const {name, email, password, role} = req.body;
 
     const findEmailRealtor = await AgentImmobilier.findOne({where : {email : email}})
     const findEmailAdmin = await Admin.findOne({where : {email : email}})
@@ -92,7 +92,7 @@ exports.create_admin = async (req, res, next) => {
         name : name && typeof(name) === "string" ? name : "",
         email : email && typeof(email) === "string" ? email : "",
         password : password && typeof(password) === "string" ? password : "",
-        roleAdmin : roleAdmin && typeof(roleAdmin) === 'string' ? roleAdmin : "true"
+        role : role && typeof(role) === 'string' ? role : "admin"
     }
 
     for(value in admin){
@@ -112,7 +112,7 @@ exports.create_admin = async (req, res, next) => {
                 const accessToken = jwt.sign({
                     id : admin.id,
                     email : admin.email,
-                    roleAdmin: admin.roleAdmin
+                    role: admin.role
                 }, process.env.SECRETADMIN, {expiresIn: process.env.EXPIRES_IN})
                 return res.status(201).json({
                     message: 'Admin created',
@@ -153,7 +153,7 @@ exports.login_admin = (req, res, next) => {
                     throw err
                 }
                 else if(result){
-                    const token = jwt.sign({id: admin.id, email: admin.email, roleAdmin: admin.roleAdmin}, process.env.SECRETADMIN, {expiresIn: process.env.EXPIRES_IN})
+                    const token = jwt.sign({id: admin.id, email: admin.email, role: admin.role}, process.env.SECRETADMIN, {expiresIn: process.env.EXPIRES_IN})
                     res.status(200).send({token})
                 }
                 else{
